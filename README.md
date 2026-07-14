@@ -91,7 +91,7 @@ Completed files: [Phase 2 notebook](notebooks/02_data_cleaning.ipynb) and [data 
 
 Completed files: [Phase 3 notebook](notebooks/03_sales_product_analysis.ipynb) and [Phase 3 SQL queries](sql/03_sales_product_analysis.sql).
 
-### Phase 4 — Customer analytics (Week 4)
+### Phase 4 — Customer analytics (Week 4) — complete
 
 - Measure customer revenue, profit, order frequency, repeat behavior, and retention.
 - Run Pareto analysis to find customers contributing roughly 80% of revenue.
@@ -99,6 +99,8 @@ Completed files: [Phase 3 notebook](notebooks/03_sales_product_analysis.ipynb) a
 - Segment customers into Champions, Loyal, Potential Loyalists, At Risk, and Lost.
 
 **Technical deliverables:** RFM table, segmentation notebook, SQL queries, and dashboard measures.
+
+Completed files: [Phase 4 notebook](notebooks/04_customer_rfm_analysis.ipynb) and [Phase 4 SQL queries](sql/04_customer_rfm_analysis.sql). The generated customer segmentation dataset is stored at `data/processed/customer_segments.csv` and is excluded from Git.
 
 ### Phase 5 — Geographic and store analysis (Week 5)
 

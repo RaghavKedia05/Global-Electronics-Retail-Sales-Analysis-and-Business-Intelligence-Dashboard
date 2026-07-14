@@ -102,7 +102,7 @@ Completed files: [Phase 3 notebook](notebooks/03_sales_product_analysis.ipynb) a
 
 Completed files: [Phase 4 notebook](notebooks/04_customer_rfm_analysis.ipynb) and [Phase 4 SQL queries](sql/04_customer_rfm_analysis.sql). The generated customer segmentation dataset is stored at `data/processed/customer_segments.csv` and is excluded from Git.
 
-### Phase 5 — Geographic and store analysis (Week 5)
+### Phase 5 — Geographic and store analysis (Week 5) — complete
 
 - Compare countries by revenue, profit, customer count, growth, and margin.
 - Rank stores by revenue, profit, orders, and growth.
@@ -110,6 +110,8 @@ Completed files: [Phase 4 notebook](notebooks/04_customer_rfm_analysis.ipynb) an
 - Separate physical-store and online performance after channel validation.
 
 **Technical deliverables:** geographic/store notebook, SQL queries, rankings, and dashboard visuals.
+
+Completed files: [Phase 5 notebook](notebooks/05_geographic_store_analysis.ipynb) and [Phase 5 SQL queries](sql/05_geographic_store_analysis.sql). The generated country, store, and store-growth datasets are stored in `data/processed/` and are excluded from Git.
 
 ### Phase 6 — Dashboard, advanced analytics, and presentation (Week 6)
 

@@ -1,0 +1,38 @@
+# Source, intermediate, and generated data
+data/raw/*
+data/interim/*
+data/processed/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+*.parquet
+
+# Power BI and presentation binaries
+*.pbix
+*.pbit
+*.pptx
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment and editor files
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated reports
+reports/*.html
+reports/*.pdf
+reports/figures/*
+!reports/figures/.gitkeep

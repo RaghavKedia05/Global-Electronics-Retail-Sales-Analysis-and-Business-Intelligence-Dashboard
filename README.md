@@ -1,11 +1,11 @@
 # Global Electronics Retail Analytics & BI Dashboard
 
-[![Project Status](https://img.shields.io/badge/status-planning%20%26%20profiling-2563EB)](#project-roadmap)
+[![Project Status](https://img.shields.io/badge/status-phase%201%20code%20complete-16A34A)](#phase-1-results)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](requirements.txt)
 [![Power BI](https://img.shields.io/badge/Power%20BI-dashboard-F2C811?logo=powerbi&logoColor=111)](powerbi/README.md)
 [![License](https://img.shields.io/badge/license-MIT-16A34A)](LICENSE)
 
-An end-to-end retail analytics project that transforms multi-country electronics sales data into a clean analytical model, reproducible analysis, customer and store insights, forecasts, and an executive Power BI dashboard.
+An end-to-end retail analytics project focused on beginner-friendly Python analysis, reusable SQL queries, a clean analytical model, and an executive Power BI dashboard. Written reports and the final presentation are prepared separately by the project author.
 
 ## Business objective
 
@@ -58,7 +58,7 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 
 ## Project roadmap
 
-### Phase 1 — Data understanding and profiling (Week 1) — start here
+### Phase 1 — Data understanding and profiling (Week 1) — complete
 
 - Inventory files, schemas, encodings, data types, row counts, and date ranges.
 - Measure nulls, duplicates, invalid keys, inconsistent values, and referential-integrity failures.
@@ -66,9 +66,9 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 - Validate currency coverage and the business meaning of special keys such as `StoreKey = 0`.
 - Produce a profiling report and finalized data dictionary.
 
-**Deliverables:** profiling notebook, data-quality summary, relationship map, and updated data dictionary.
+**Technical deliverable:** beginner-friendly profiling notebook.
 
-### Phase 2 — Cleaning and preparation (Week 2)
+### Phase 2 — Cleaning and preparation (Week 2) — complete
 
 - Remove confirmed duplicates and define documented missing-value rules.
 - Parse dates and currency fields; standardize names and column conventions.
@@ -76,7 +76,9 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 - Join the six datasets into a reproducible star schema or analytical table.
 - Add Year, Quarter, Month, Month Name, Day of Week, Profit Margin %, and Sales Category.
 
-**Deliverables:** cleaned datasets in `data/processed/`, cleaning notebook/script, and cleaning report.
+**Deliverables:** cleaning notebook, cleaned dataset, and data cleaning documentation.
+
+Completed files: [Phase 2 notebook](notebooks/02_data_cleaning.ipynb) and [data cleaning documentation](docs/data_cleaning_documentation.md). The generated cleaned dataset is stored at `data/processed/cleaned_sales.csv` and is excluded from Git.
 
 ### Phase 3 — Sales and product analysis (Week 3)
 
@@ -85,7 +87,7 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 - Rank categories, subcategories, brands, and products by sales and profit.
 - Identify loss-making and high-sales/low-margin products.
 
-**Deliverables:** KPI analysis notebook, SQL queries, figures, and findings report.
+**Technical deliverables:** KPI analysis notebook, reusable SQL queries, and Power BI-ready outputs.
 
 ### Phase 4 — Customer analytics (Week 4)
 
@@ -94,7 +96,7 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 - Calculate Recency, Frequency, and Monetary value at a documented snapshot date.
 - Segment customers into Champions, Loyal, Potential Loyalists, At Risk, and Lost.
 
-**Deliverables:** RFM table, segmentation notebook, and customer insight report.
+**Technical deliverables:** RFM table, segmentation notebook, SQL queries, and dashboard measures.
 
 ### Phase 5 — Geographic and store analysis (Week 5)
 
@@ -103,7 +105,7 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 - Normalize store performance where useful (for example, revenue per square meter).
 - Separate physical-store and online performance after channel validation.
 
-**Deliverables:** geographic/store notebook, rankings, maps, and recommendations.
+**Technical deliverables:** geographic/store notebook, SQL queries, rankings, and dashboard visuals.
 
 ### Phase 6 — Dashboard, advanced analytics, and presentation (Week 6)
 
@@ -111,18 +113,28 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 - Forecast three- and six-month sales using baselines such as moving average and linear regression; report validation error.
 - Perform order-level market-basket analysis using support, confidence, and lift.
 - Convert findings into prioritized, evidence-based business recommendations.
-- Prepare a 15–20 slide stakeholder presentation with dashboard screenshots.
+- Export dashboard screenshots that can be used by the project author in a separate presentation.
 
-**Deliverables:** `.pbix` dashboard, forecast and basket-analysis outputs, business insight report, and presentation.
+**Technical deliverables:** `.pbix` dashboard, DAX measures, forecast code, basket-analysis code, and Power BI-ready outputs.
 
-## What to do now
+## Phase 1 results
 
-1. Copy the six untouched CSV files into `data/raw/`.
-2. Create and activate a Python virtual environment.
-3. Install dependencies with `pip install -r requirements.txt`.
-4. Complete `notebooks/01_data_understanding.ipynb` and export the profiling results to `reports/`.
-5. Record every issue and proposed treatment before changing data.
-6. Define Phase 1 acceptance checks: row counts reconcile, composite sales key is tested, all joins are measured, and date/currency coverage is documented.
+- 62,884 sales lines represent 26,326 distinct orders from 2016-01-01 through 2021-02-20.
+- No unmatched customer, product, physical-store, or exchange-rate relationships were detected.
+- No non-positive quantities/prices, delivery-before-order dates, or products with cost above list price were detected.
+- 13,165 lines use `StoreKey = 0`; this should be confirmed and modeled as an online channel.
+- 49,719 lines have no delivery date; the business meaning must be confirmed before treatment.
+- Profiling checks are written directly in the Phase 1 notebook and display their results without generating a separate report.
+
+See the [Phase 1 data-understanding notebook](notebooks/01_data_understanding.ipynb).
+
+## What to do next
+
+1. Confirm that `StoreKey = 0` means online sales.
+2. Confirm whether blank delivery dates represent in-store purchases, pickup orders, or missing operational data.
+3. Create and activate a Python virtual environment.
+4. Install dependencies with `pip install -r requirements.txt`.
+5. Start Phase 2 by defining cleaning rules and validation tests before producing processed data.
 
 Do not begin dashboard design until the KPI definitions and cleaned model have passed validation.
 

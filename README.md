@@ -80,7 +80,7 @@ The exchange-rate table will also be used to retain or reconstruct local-currenc
 
 Completed files: [Phase 2 notebook](notebooks/02_data_cleaning.ipynb) and [data cleaning documentation](docs/data_cleaning_documentation.md). The generated cleaned dataset is stored at `data/processed/cleaned_sales.csv` and is excluded from Git.
 
-### Phase 3 — Sales and product analysis (Week 3)
+### Phase 3 — Sales and product analysis (Week 3) — complete
 
 - Calculate revenue, profit, orders, customers, average order value, and margin.
 - Analyze yearly, quarterly, and monthly trends, growth, and seasonality.
@@ -88,6 +88,8 @@ Completed files: [Phase 2 notebook](notebooks/02_data_cleaning.ipynb) and [data 
 - Identify loss-making and high-sales/low-margin products.
 
 **Technical deliverables:** KPI analysis notebook, reusable SQL queries, and Power BI-ready outputs.
+
+Completed files: [Phase 3 notebook](notebooks/03_sales_product_analysis.ipynb) and [Phase 3 SQL queries](sql/03_sales_product_analysis.sql).
 
 ### Phase 4 — Customer analytics (Week 4)
 

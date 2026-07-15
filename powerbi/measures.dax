@@ -1,0 +1,65 @@
+-- Date table
+Date Table =
+CALENDAR(
+    MIN('cleaned_sales'[Order Date]),
+    MAX('cleaned_sales'[Order Date])
+)
+
+-- Add these calculated columns to Date Table
+Year = YEAR('Date Table'[Date])
+Year Month = FORMAT('Date Table'[Date], "YYYY-MM")
+
+-- Overall KPIs
+Total Revenue = SUM('cleaned_sales'[Sales USD])
+
+Total Profit = SUM('cleaned_sales'[Profit USD])
+
+Total Orders = DISTINCTCOUNT('cleaned_sales'[Order Number])
+
+Total Customers = DISTINCTCOUNT('cleaned_sales'[CustomerKey])
+
+Average Order Value = DIVIDE([Total Revenue], [Total Orders], 0)
+
+Profit Margin % = DIVIDE([Total Profit], [Total Revenue], 0)
+
+-- Store ranking
+Store Rank =
+RANKX(
+    ALL('cleaned_sales'[StoreKey]),
+    [Total Revenue],
+    ,
+    DESC,
+    DENSE
+)
+
+-- Customer measures
+Repeat Customers =
+CALCULATE(
+    COUNTROWS('customer_segments'),
+    'customer_segments'[Frequency] > 1
+)
+
+Customer Retention Rate =
+DIVIDE(
+    [Repeat Customers],
+    COUNTROWS('customer_segments'),
+    0
+)
+
+New Customers =
+VAR FirstVisibleDate = MIN('Date Table'[Date])
+VAR LastVisibleDate = MAX('Date Table'[Date])
+RETURN
+COUNTROWS(
+    FILTER(
+        VALUES('cleaned_sales'[CustomerKey]),
+        CALCULATE(
+            MIN('cleaned_sales'[Order Date]),
+            ALL('Date Table')
+        ) >= FirstVisibleDate
+            && CALCULATE(
+                MIN('cleaned_sales'[Order Date]),
+                ALL('Date Table')
+            ) <= LastVisibleDate
+    )
+)

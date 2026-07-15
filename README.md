@@ -1,193 +1,130 @@
-# Global Electronics Retail Analytics & BI Dashboard
+# Global Electronics Retail Analytics
 
-[![Project Status](https://img.shields.io/badge/status-phase%201%20code%20complete-16A34A)](#phase-1-results)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](requirements.txt)
-[![Power BI](https://img.shields.io/badge/Power%20BI-dashboard-F2C811?logo=powerbi&logoColor=111)](powerbi/README.md)
-[![License](https://img.shields.io/badge/license-MIT-16A34A)](LICENSE)
+This project analyzes electronics retail sales using Python, SQL, and Power BI. It covers sales, products, customers, countries, stores, forecasting, market-basket analysis, and profitability.
 
-An end-to-end retail analytics project focused on beginner-friendly Python analysis, reusable SQL queries, a clean analytical model, and an executive Power BI dashboard. Written reports and the final presentation are prepared separately by the project author.
+## Datasets
 
-## Business objective
+| File | Records | Description |
+|---|---:|---|
+| `Sales.csv` | 62,884 | Order-line transactions |
+| `Customers.csv` | 15,266 | Customer details |
+| `Products.csv` | 2,517 | Product, category, cost, and price details |
+| `Stores.csv` | 67 | Store location and size details |
+| `Exchange_Rates.csv` | 11,215 | Daily exchange rates |
+| `Data_Dictionary.csv` | 37 | Source-column definitions |
 
-Management needs a reliable view of revenue, profit, customers, products, countries, and stores. This project will answer:
+The source CSV files belong in `data/raw/`. Generated CSV files are saved in `data/processed/` and are not committed to Git.
 
-- Which products, categories, countries, and stores create the most revenue and profit?
-- Where are sales growing, declining, or showing seasonal patterns?
-- Which customers are most valuable, loyal, at risk, or lost?
-- Which products have high sales but weak profitability?
-- What products are frequently purchased together?
-- What sales levels can be expected over the next three to six months?
+## Project phases
 
-## Dataset overview
+### Phase 1: Data Understanding
 
-The source package contains six CSV files and 91,966 data rows in total (including the 37-row data dictionary).
+- Total records and columns
+- Data types
+- Missing values
+- Duplicate records
+- Transaction count and date range
+- Data dictionary
 
-| Dataset | Rows | Key fields | Purpose |
-|---|---:|---|---|
-| `Sales.csv` | 62,884 | Order Number, CustomerKey, StoreKey, ProductKey | Transaction line items |
-| `Customers.csv` | 15,266 | CustomerKey | Customer and geographic attributes |
-| `Exchange_Rates.csv` | 11,215 | Date, Currency | Daily currency-to-USD exchange rates |
-| `Products.csv` | 2,517 | ProductKey | Product hierarchy, USD cost, and USD price |
-| `Stores.csv` | 67 | StoreKey | Store geography, footprint, and opening date |
-| `Data_Dictionary.csv` | 37 | Table, Field | Source-field definitions |
+Notebook: [01_data_understanding.ipynb](notebooks/01_data_understanding.ipynb)
 
-> Source data is intentionally not committed. Place the six CSV files in `data/raw/` and keep their original filenames. `Customers.csv` is Windows-1252 encoded; the other supplied files are UTF-8 compatible.
+### Phase 2: Data Cleaning and Preparation
 
-## Analytical model
+- Remove duplicates
+- Handle missing values
+- Standardize dates
+- Check invalid sales values
+- Create the required date, margin, and sales-category columns
+- Save the cleaned dataset
 
-`Sales` is the fact table. It joins to `Customers`, `Products`, and `Stores` by their keys, and to `Exchange_Rates` by order date and currency code.
+Files:
 
-```text
-Customers (CustomerKey) ──┐
-Products  (ProductKey)  ──┼──> Sales <── (StoreKey) Stores
-Exchange Rates          ──┘       │
-                         Date + Currency Code
+- [02_data_cleaning.ipynb](notebooks/02_data_cleaning.ipynb)
+- [Data cleaning documentation](docs/data_cleaning_documentation.md)
+- `data/processed/cleaned_sales.csv`
+
+### Phase 3: Sales Analysis
+
+- Overall KPIs
+- Yearly, quarterly, and monthly trends
+- Category and subcategory performance
+- Top, bottom, and loss-making products
+
+Files:
+
+- [03_sales_product_analysis.ipynb](notebooks/03_sales_product_analysis.ipynb)
+- [03_sales_product_analysis.sql](sql/03_sales_product_analysis.sql)
+
+### Phase 4: Customer Analysis
+
+- Customer sales and profit
+- Repeat customers and retention rate
+- Top 20 customers
+- Customers contributing the first 80% of revenue
+- RFM analysis and customer segments
+
+Files:
+
+- [04_customer_rfm_analysis.ipynb](notebooks/04_customer_rfm_analysis.ipynb)
+- [04_customer_rfm_analysis.sql](sql/04_customer_rfm_analysis.sql)
+- `data/processed/customer_segments.csv`
+
+### Phase 5: Geographic and Store Analysis
+
+- Country sales, profit, customer count, and margin
+- Best and worst countries
+- Store sales, profit, orders, rankings, and growth
+
+Files:
+
+- [05_geographic_store_analysis.ipynb](notebooks/05_geographic_store_analysis.ipynb)
+- [05_geographic_store_analysis.sql](sql/05_geographic_store_analysis.sql)
+- `data/processed/country_performance.csv`
+- `data/processed/store_performance.csv`
+- `data/processed/store_growth.csv`
+
+### Phase 6: Dashboard and Advanced Analysis
+
+- Three- and six-month sales forecasts
+- Market-basket analysis
+- Product profitability groups
+- Executive, Store Performance, and Customer Power BI pages
+
+Files:
+
+- [06_forecasting_basket_analysis.ipynb](notebooks/06_forecasting_basket_analysis.ipynb)
+- [Power BI build steps](powerbi/dashboard_build.md)
+- [DAX measures](powerbi/measures.dax)
+- [Power BI theme](powerbi/theme.json)
+- `data/processed/sales_forecast.csv`
+- `data/processed/market_basket.csv`
+- `data/processed/product_profitability.csv`
+
+The `.pbix` file must be created in Power BI Desktop using the prepared data, DAX measures, theme, and page layout.
+
+## Setup
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+jupyter lab
 ```
 
-Core measures will be validated during Phase 2:
-
-```text
-Revenue USD    = Quantity × Unit Price USD
-Cost USD       = Quantity × Unit Cost USD
-Profit USD     = Revenue USD − Cost USD
-Profit Margin  = Profit USD ÷ Revenue USD
-Average Order Value = Revenue USD ÷ Distinct Orders
-```
-
-The exchange-rate table will also be used to retain or reconstruct local-currency measures where needed. The meaning of `StoreKey = 0` (likely online sales) must be confirmed before store/channel reporting.
-
-## Project roadmap
-
-### Phase 1 — Data understanding and profiling (Week 1) — complete
-
-- Inventory files, schemas, encodings, data types, row counts, and date ranges.
-- Measure nulls, duplicates, invalid keys, inconsistent values, and referential-integrity failures.
-- Confirm grain: one row per order line (`Order Number` + `Line Item`).
-- Validate currency coverage and the business meaning of special keys such as `StoreKey = 0`.
-- Produce a profiling report and finalized data dictionary.
-
-**Technical deliverable:** beginner-friendly profiling notebook.
-
-### Phase 2 — Cleaning and preparation (Week 2) — complete
-
-- Remove confirmed duplicates and define documented missing-value rules.
-- Parse dates and currency fields; standardize names and column conventions.
-- Validate positive quantities, prices, costs, exchange rates, and delivery dates.
-- Join the six datasets into a reproducible star schema or analytical table.
-- Add Year, Quarter, Month, Month Name, Day of Week, Profit Margin %, and Sales Category.
-
-**Deliverables:** cleaning notebook, cleaned dataset, and data cleaning documentation.
-
-Completed files: [Phase 2 notebook](notebooks/02_data_cleaning.ipynb) and [data cleaning documentation](docs/data_cleaning_documentation.md). The generated cleaned dataset is stored at `data/processed/cleaned_sales.csv` and is excluded from Git.
-
-### Phase 3 — Sales and product analysis (Week 3) — complete
-
-- Calculate revenue, profit, orders, customers, average order value, and margin.
-- Analyze yearly, quarterly, and monthly trends, growth, and seasonality.
-- Rank categories, subcategories, brands, and products by sales and profit.
-- Identify loss-making and high-sales/low-margin products.
-
-**Technical deliverables:** KPI analysis notebook, reusable SQL queries, and Power BI-ready outputs.
-
-Completed files: [Phase 3 notebook](notebooks/03_sales_product_analysis.ipynb) and [Phase 3 SQL queries](sql/03_sales_product_analysis.sql).
-
-### Phase 4 — Customer analytics (Week 4) — complete
-
-- Measure customer revenue, profit, order frequency, repeat behavior, and retention.
-- Run Pareto analysis to find customers contributing roughly 80% of revenue.
-- Calculate Recency, Frequency, and Monetary value at a documented snapshot date.
-- Segment customers into Champions, Loyal, Potential Loyalists, At Risk, and Lost.
-
-**Technical deliverables:** RFM table, segmentation notebook, SQL queries, and dashboard measures.
-
-Completed files: [Phase 4 notebook](notebooks/04_customer_rfm_analysis.ipynb) and [Phase 4 SQL queries](sql/04_customer_rfm_analysis.sql). The generated customer segmentation dataset is stored at `data/processed/customer_segments.csv` and is excluded from Git.
-
-### Phase 5 — Geographic and store analysis (Week 5) — complete
-
-- Compare countries by revenue, profit, customer count, growth, and margin.
-- Rank stores by revenue, profit, orders, and growth.
-- Normalize store performance where useful (for example, revenue per square meter).
-- Separate physical-store and online performance after channel validation.
-
-**Technical deliverables:** geographic/store notebook, SQL queries, rankings, and dashboard visuals.
-
-Completed files: [Phase 5 notebook](notebooks/05_geographic_store_analysis.ipynb) and [Phase 5 SQL queries](sql/05_geographic_store_analysis.sql). The generated country, store, and store-growth datasets are stored in `data/processed/` and are excluded from Git.
-
-### Phase 6 — Dashboard, advanced analytics, and presentation (Week 6)
-
-- Build Executive, Store Performance, and Customer pages in Power BI.
-- Forecast three- and six-month sales using baselines such as moving average and linear regression; report validation error.
-- Perform order-level market-basket analysis using support, confidence, and lift.
-- Convert findings into prioritized, evidence-based business recommendations.
-- Export dashboard screenshots that can be used by the project author in a separate presentation.
-
-**Technical deliverables:** `.pbix` dashboard, DAX measures, forecast code, basket-analysis code, and Power BI-ready outputs.
-
-## Phase 1 results
-
-- 62,884 sales lines represent 26,326 distinct orders from 2016-01-01 through 2021-02-20.
-- No unmatched customer, product, physical-store, or exchange-rate relationships were detected.
-- No non-positive quantities/prices, delivery-before-order dates, or products with cost above list price were detected.
-- 13,165 lines use `StoreKey = 0`; this should be confirmed and modeled as an online channel.
-- 49,719 lines have no delivery date; the business meaning must be confirmed before treatment.
-- Profiling checks are written directly in the Phase 1 notebook and display their results without generating a separate report.
-
-See the [Phase 1 data-understanding notebook](notebooks/01_data_understanding.ipynb).
-
-## What to do next
-
-1. Confirm that `StoreKey = 0` means online sales.
-2. Confirm whether blank delivery dates represent in-store purchases, pickup orders, or missing operational data.
-3. Create and activate a Python virtual environment.
-4. Install dependencies with `pip install -r requirements.txt`.
-5. Start Phase 2 by defining cleaning rules and validation tests before producing processed data.
-
-Do not begin dashboard design until the KPI definitions and cleaned model have passed validation.
+Run the notebooks in numerical order.
 
 ## Repository structure
 
 ```text
-.
-├── data/
-│   ├── raw/                 # Immutable source CSVs (not tracked)
-│   ├── interim/             # Temporary standardized data
-│   └── processed/           # Analysis-ready tables (not tracked)
-├── docs/                    # Requirements, dictionary, and methodology
-├── notebooks/               # Numbered exploration and analysis notebooks
-├── powerbi/                 # PBIX file, theme, and dashboard notes
-├── presentation/            # Final 15–20 slide deck
-├── reports/
-│   └── figures/             # Exported charts and dashboard screenshots
-├── sql/                     # Reproducible schema and analysis queries
-├── src/
-│   ├── data/                # Ingestion, validation, and cleaning code
-│   ├── features/            # KPI, date, RFM, and basket features
-│   ├── analysis/            # Sales, customer, store, and forecast logic
-│   └── visualization/       # Reusable plotting helpers
-├── tests/                   # Data-quality and transformation tests
-├── .gitignore
-├── LICENSE
-├── README.md
-└── requirements.txt
+data/           Raw and processed data
+docs/           Data cleaning documentation
+notebooks/      Python analysis notebooks
+powerbi/        DAX, theme, and dashboard instructions
+presentation/   Final presentation files
+reports/        Written reports and exported figures
+sql/            SQL analysis queries
 ```
-
-## Reproducibility conventions
-
-- Treat `data/raw/` as immutable; transformations must be implemented in notebooks, Python, SQL, Power Query, or DAX.
-- Use snake_case for engineered columns and document every KPI formula.
-- Aggregate orders with `COUNT(DISTINCT order_number)`, not sales row count.
-- Keep exploratory notebooks readable, but move reusable logic into `src/`.
-- Store generated data and large BI artifacts outside Git; publish screenshots and documentation instead.
-- Never expose customer names or other personally identifiable information in public dashboard screenshots.
-
-## Planned dashboard pages
-
-1. **Executive Overview:** headline KPIs, monthly trend, category mix, country performance, and key insights.
-2. **Product & Profitability:** category/subcategory drill-down, top and bottom products, margin quadrants.
-3. **Store & Geography:** store rankings, regional comparison, growth, and revenue per square meter.
-4. **Customer & RFM:** customer segments, repeat behavior, Pareto contribution, and customer growth.
-5. **Advanced Insights:** forecast, product affinities, risks, and recommended actions.
 
 ## License
 
-This repository is available under the [MIT License](LICENSE). Review the source dataset's own terms before redistributing any data.
+This project uses the [MIT License](LICENSE).

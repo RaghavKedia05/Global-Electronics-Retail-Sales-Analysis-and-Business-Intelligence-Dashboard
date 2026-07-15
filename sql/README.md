@@ -1,3 +1,7 @@
 # SQL
 
-Organize scripts by execution order, for example `01_schema.sql`, `02_cleaning.sql`, `03_kpis.sql`, and `04_analysis.sql`. Queries should use documented KPI definitions and include validation checks.
+The queries use Microsoft SQL Server syntax and assume the cleaned dataset has been loaded into a table named `cleaned_sales`.
+
+- `03_sales_product_analysis.sql`
+- `04_customer_rfm_analysis.sql`
+- `05_geographic_store_analysis.sql`

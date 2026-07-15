@@ -8,5 +8,3 @@ Use numbered notebooks in execution order:
 4. `04_customer_rfm_analysis.ipynb`
 5. `05_geographic_store_analysis.ipynb`
 6. `06_forecasting_basket_analysis.ipynb`
-
-Move reusable transformations and calculations into `src/`.

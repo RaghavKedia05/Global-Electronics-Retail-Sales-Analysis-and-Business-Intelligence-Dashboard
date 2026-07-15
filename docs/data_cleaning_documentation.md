@@ -2,17 +2,17 @@
 
 ## Dataset
 
-The five main source tables were combined to create `data/processed/cleaned_sales.csv`.
+The Sales, Products, Customers, and Stores tables were combined to create `data/processed/cleaned_sales.csv`.
 
 - Input sales records: 62,884
 - Output records: 62,884
-- Output columns: 44
+- Output columns: 41
 
 ## Cleaning steps
 
 ### Duplicate records
 
-Complete duplicate rows were checked in Customers, Products, Sales, Stores, and Exchange Rates. No duplicate rows were found.
+Complete duplicate rows were checked in Customers, Products, Sales, and Stores. No duplicate rows were found.
 
 ### Missing values
 
@@ -27,7 +27,6 @@ The following columns were converted to `YYYY-MM-DD` format:
 - Delivery Date
 - Birthday
 - Open Date
-- Exchange Rate Date
 
 ### Invalid sales values
 

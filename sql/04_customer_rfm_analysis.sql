@@ -97,9 +97,9 @@ rfm_values AS (
 rfm_scores AS (
     SELECT
         *,
-        NTILE(5) OVER (ORDER BY recency DESC) AS r_score,
-        NTILE(5) OVER (ORDER BY frequency ASC) AS f_score,
-        NTILE(5) OVER (ORDER BY monetary ASC) AS m_score
+        NTILE(5) OVER (ORDER BY recency DESC, CustomerKey) AS r_score,
+        NTILE(5) OVER (ORDER BY frequency ASC, CustomerKey) AS f_score,
+        NTILE(5) OVER (ORDER BY monetary ASC, CustomerKey) AS m_score
     FROM rfm_values
 ),
 rfm_total AS (

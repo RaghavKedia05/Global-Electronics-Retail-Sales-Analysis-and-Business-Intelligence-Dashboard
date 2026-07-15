@@ -96,6 +96,7 @@ Files:
 - [Power BI build steps](powerbi/dashboard_build.md)
 - [DAX measures](powerbi/measures.dax)
 - [Power BI theme](powerbi/theme.json)
+- `data/processed/forecast_validation.csv`
 - `data/processed/sales_forecast.csv`
 - `data/processed/market_basket.csv`
 - `data/processed/product_profitability.csv`

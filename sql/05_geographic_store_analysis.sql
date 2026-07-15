@@ -4,11 +4,11 @@
 -- 1. Country performance based on customer country
 SELECT
     Country_Customer AS country,
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit,
     COUNT(DISTINCT CustomerKey) AS customers,
     COUNT(DISTINCT [Order Number]) AS orders,
-    ROUND(SUM([Profit USD]) * 100.0 / SUM([Sales USD]), 2) AS profit_margin_percent
+    ROUND(SUM([Gross Profit USD]) * 100.0 / SUM([Revenue USD]), 2) AS gross_margin_percent
 FROM cleaned_sales
 GROUP BY Country_Customer
 ORDER BY revenue DESC;
@@ -16,7 +16,7 @@ ORDER BY revenue DESC;
 -- 2. Best-performing country
 SELECT TOP 1
     Country_Customer AS country,
-    ROUND(SUM([Sales USD]), 2) AS revenue
+    ROUND(SUM([Revenue USD]), 2) AS revenue
 FROM cleaned_sales
 GROUP BY Country_Customer
 ORDER BY revenue DESC;
@@ -24,7 +24,7 @@ ORDER BY revenue DESC;
 -- 3. Worst-performing country
 SELECT TOP 1
     Country_Customer AS country,
-    ROUND(SUM([Sales USD]), 2) AS revenue
+    ROUND(SUM([Revenue USD]), 2) AS revenue
 FROM cleaned_sales
 GROUP BY Country_Customer
 ORDER BY revenue ASC;
@@ -32,20 +32,20 @@ ORDER BY revenue ASC;
 -- 4. Country with the highest profit margin
 SELECT TOP 1
     Country_Customer AS country,
-    ROUND(SUM([Profit USD]) * 100.0 / SUM([Sales USD]), 2) AS profit_margin_percent
+    ROUND(SUM([Gross Profit USD]) * 100.0 / SUM([Revenue USD]), 2) AS gross_margin_percent
 FROM cleaned_sales
 GROUP BY Country_Customer
-ORDER BY profit_margin_percent DESC;
+ORDER BY gross_margin_percent DESC;
 
 -- 5. Store performance
 SELECT
     StoreKey,
     Country_Store,
     State_Store,
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit,
     COUNT(DISTINCT [Order Number]) AS orders,
-    ROUND(SUM([Profit USD]) * 100.0 / SUM([Sales USD]), 2) AS profit_margin_percent
+    ROUND(SUM([Gross Profit USD]) * 100.0 / SUM([Revenue USD]), 2) AS gross_margin_percent
 FROM cleaned_sales
 GROUP BY StoreKey, Country_Store, State_Store
 ORDER BY revenue DESC;
@@ -55,8 +55,8 @@ SELECT TOP 10
     StoreKey,
     Country_Store,
     State_Store,
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit,
     COUNT(DISTINCT [Order Number]) AS orders
 FROM cleaned_sales
 GROUP BY StoreKey, Country_Store, State_Store
@@ -67,8 +67,8 @@ SELECT TOP 10
     StoreKey,
     Country_Store,
     State_Store,
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit,
     COUNT(DISTINCT [Order Number]) AS orders
 FROM cleaned_sales
 GROUP BY StoreKey, Country_Store, State_Store
@@ -81,7 +81,7 @@ WITH yearly_store_sales AS (
         Country_Store,
         State_Store,
         [Year],
-        SUM([Sales USD]) AS revenue
+        SUM([Revenue USD]) AS revenue
     FROM cleaned_sales
     GROUP BY StoreKey, Country_Store, State_Store, [Year]
 ),

@@ -1,83 +1,94 @@
 -- Phase 4: Customer Analysis
--- The cleaned CSV should be loaded into a table named cleaned_sales.
 
--- 1. Customer-wise sales, profit, and order count
+-- Customer sales, gross profit, and order count
 SELECT
     CustomerKey,
-    [Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit,
     COUNT(DISTINCT [Order Number]) AS orders
 FROM cleaned_sales
-GROUP BY CustomerKey, [Name]
+GROUP BY CustomerKey
 ORDER BY revenue DESC;
 
--- 2. Repeat customers
+-- Repeat customers
 SELECT
     CustomerKey,
-    [Name],
     COUNT(DISTINCT [Order Number]) AS orders
 FROM cleaned_sales
-GROUP BY CustomerKey, [Name]
+GROUP BY CustomerKey
 HAVING COUNT(DISTINCT [Order Number]) > 1
 ORDER BY orders DESC;
 
--- 3. Top 20 customers by revenue
+-- Top 20 customers by revenue
 SELECT TOP 20
     CustomerKey,
-    [Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
-    COUNT(DISTINCT [Order Number]) AS orders
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit
 FROM cleaned_sales
-GROUP BY CustomerKey, [Name]
+GROUP BY CustomerKey
 ORDER BY revenue DESC;
 
--- 4. Customers contributing the first 80% of revenue
+-- Customers contributing the first 80 percent of revenue
 WITH customer_revenue AS (
-    SELECT
-        CustomerKey,
-        [Name],
-        SUM([Sales USD]) AS revenue
+    SELECT CustomerKey, SUM([Revenue USD]) AS revenue
     FROM cleaned_sales
-    GROUP BY CustomerKey, [Name]
+    GROUP BY CustomerKey
 ),
 customer_contribution AS (
     SELECT
         CustomerKey,
-        [Name],
         revenue,
-        SUM(revenue) OVER (ORDER BY revenue DESC) AS cumulative_revenue,
+        SUM(revenue) OVER (ORDER BY revenue DESC, CustomerKey) AS cumulative_revenue,
         SUM(revenue) OVER () AS total_revenue
     FROM customer_revenue
 )
 SELECT
     CustomerKey,
-    [Name],
     ROUND(revenue, 2) AS revenue,
     ROUND(cumulative_revenue * 100.0 / total_revenue, 2) AS cumulative_revenue_percent
 FROM customer_contribution
 WHERE (cumulative_revenue - revenue) * 100.0 / total_revenue < 80
 ORDER BY revenue DESC;
 
--- 5. Customer retention rate based on repeat customers
-WITH customer_orders AS (
-    SELECT
-        CustomerKey,
-        COUNT(DISTINCT [Order Number]) AS orders
+-- Retention using the last two complete calendar years
+WITH complete_years AS (
+    SELECT [Year]
     FROM cleaned_sales
-    GROUP BY CustomerKey
+    GROUP BY [Year]
+    HAVING COUNT(DISTINCT [Month]) = 12
+),
+retention_period AS (
+    SELECT MAX([Year]) AS retention_year
+    FROM complete_years
+),
+base_customers AS (
+    SELECT DISTINCT CustomerKey
+    FROM cleaned_sales
+    CROSS JOIN retention_period
+    WHERE [Year] = retention_year - 1
+),
+returning_customers AS (
+    SELECT DISTINCT CustomerKey
+    FROM cleaned_sales
+    CROSS JOIN retention_period
+    WHERE [Year] = retention_year
 )
 SELECT
-    COUNT(*) AS total_customers,
-    SUM(CASE WHEN orders > 1 THEN 1 ELSE 0 END) AS repeat_customers,
+    retention_year - 1 AS base_year,
+    retention_year,
+    COUNT(*) AS base_customers,
+    SUM(CASE WHEN returning_customers.CustomerKey IS NOT NULL THEN 1 ELSE 0 END) AS retained_customers,
     ROUND(
-        SUM(CASE WHEN orders > 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*),
+        SUM(CASE WHEN returning_customers.CustomerKey IS NOT NULL THEN 1 ELSE 0 END) * 100.0 / COUNT(*),
         2
     ) AS retention_rate_percent
-FROM customer_orders;
+FROM base_customers
+CROSS JOIN retention_period
+LEFT JOIN returning_customers
+    ON base_customers.CustomerKey = returning_customers.CustomerKey
+GROUP BY retention_year;
 
--- 6. RFM analysis and customer segments
+-- RFM values, scores, and segments
 WITH snapshot AS (
     SELECT DATEADD(day, 1, MAX([Order Date])) AS snapshot_date
     FROM cleaned_sales
@@ -85,14 +96,15 @@ WITH snapshot AS (
 rfm_values AS (
     SELECT
         CustomerKey,
-        [Name],
+        MIN([Order Date]) AS first_purchase_date,
+        MAX([Order Date]) AS last_purchase_date,
         DATEDIFF(day, MAX([Order Date]), MAX(snapshot.snapshot_date)) AS recency,
         COUNT(DISTINCT [Order Number]) AS frequency,
-        SUM([Sales USD]) AS monetary,
-        SUM([Profit USD]) AS profit
+        SUM([Revenue USD]) AS monetary,
+        SUM([Gross Profit USD]) AS gross_profit
     FROM cleaned_sales
     CROSS JOIN snapshot
-    GROUP BY CustomerKey, [Name]
+    GROUP BY CustomerKey
 ),
 rfm_scores AS (
     SELECT
@@ -103,22 +115,11 @@ rfm_scores AS (
     FROM rfm_values
 ),
 rfm_total AS (
-    SELECT
-        *,
-        r_score + f_score + m_score AS rfm_score
+    SELECT *, r_score + f_score + m_score AS rfm_score
     FROM rfm_scores
 )
 SELECT
-    CustomerKey,
-    [Name],
-    recency,
-    frequency,
-    ROUND(monetary, 2) AS monetary,
-    ROUND(profit, 2) AS profit,
-    r_score,
-    f_score,
-    m_score,
-    rfm_score,
+    *,
     CASE
         WHEN rfm_score >= 13 THEN 'Champions'
         WHEN rfm_score >= 10 THEN 'Loyal Customers'

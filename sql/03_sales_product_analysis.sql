@@ -3,19 +3,19 @@
 
 -- 1. Overall KPIs
 SELECT
-    ROUND(SUM([Sales USD]), 2) AS total_revenue,
-    ROUND(SUM([Profit USD]), 2) AS total_profit,
+    ROUND(SUM([Revenue USD]), 2) AS total_revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS total_gross_profit,
     COUNT(DISTINCT [Order Number]) AS total_orders,
     COUNT(DISTINCT CustomerKey) AS total_customers,
-    ROUND(SUM([Sales USD]) / COUNT(DISTINCT [Order Number]), 2) AS average_order_value,
-    ROUND(SUM([Profit USD]) * 100.0 / SUM([Sales USD]), 2) AS profit_margin_percent
+    ROUND(SUM([Revenue USD]) / COUNT(DISTINCT [Order Number]), 2) AS average_order_value,
+    ROUND(SUM([Gross Profit USD]) * 100.0 / SUM([Revenue USD]), 2) AS gross_margin_percent
 FROM cleaned_sales;
 
 -- 2. Yearly sales and growth
 WITH yearly_sales AS (
     SELECT
         [Year],
-        SUM([Sales USD]) AS revenue
+        SUM([Revenue USD]) AS revenue
     FROM cleaned_sales
     GROUP BY [Year]
 )
@@ -34,7 +34,7 @@ ORDER BY [Year];
 SELECT
     [Year],
     [Quarter],
-    ROUND(SUM([Sales USD]), 2) AS revenue
+    ROUND(SUM([Revenue USD]), 2) AS revenue
 FROM cleaned_sales
 GROUP BY [Year], [Quarter]
 ORDER BY [Year], [Quarter];
@@ -44,7 +44,7 @@ SELECT
     [Year],
     [Month],
     [Month Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue
+    ROUND(SUM([Revenue USD]), 2) AS revenue
 FROM cleaned_sales
 GROUP BY [Year], [Month], [Month Name]
 ORDER BY [Year], [Month];
@@ -53,7 +53,7 @@ ORDER BY [Year], [Month];
 SELECT
     [Month],
     [Month Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue
+    ROUND(SUM([Revenue USD]), 2) AS revenue
 FROM cleaned_sales
 GROUP BY [Month], [Month Name]
 ORDER BY revenue DESC;
@@ -64,7 +64,7 @@ WITH monthly_sales AS (
         [Year],
         [Month],
         [Month Name],
-        SUM([Sales USD]) AS revenue
+        SUM([Revenue USD]) AS revenue
     FROM cleaned_sales
     GROUP BY [Year], [Month], [Month Name]
 )
@@ -79,8 +79,8 @@ ORDER BY [Month];
 -- 7. Category performance
 SELECT
     Category,
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit,
     COUNT(DISTINCT [Order Number]) AS orders
 FROM cleaned_sales
 GROUP BY Category
@@ -90,8 +90,8 @@ ORDER BY revenue DESC;
 SELECT
     Category,
     Subcategory,
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit,
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit,
     COUNT(DISTINCT [Order Number]) AS orders
 FROM cleaned_sales
 GROUP BY Category, Subcategory
@@ -101,8 +101,8 @@ ORDER BY revenue DESC;
 SELECT TOP 10
     ProductKey,
     [Product Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit
 FROM cleaned_sales
 GROUP BY ProductKey, [Product Name]
 ORDER BY revenue DESC;
@@ -111,18 +111,18 @@ ORDER BY revenue DESC;
 SELECT TOP 10
     ProductKey,
     [Product Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit
 FROM cleaned_sales
 GROUP BY ProductKey, [Product Name]
-ORDER BY profit DESC;
+ORDER BY gross_profit DESC;
 
 -- 11. Bottom 10 products by sales
 SELECT TOP 10
     ProductKey,
     [Product Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit
 FROM cleaned_sales
 GROUP BY ProductKey, [Product Name]
 ORDER BY revenue ASC;
@@ -131,9 +131,9 @@ ORDER BY revenue ASC;
 SELECT
     ProductKey,
     [Product Name],
-    ROUND(SUM([Sales USD]), 2) AS revenue,
-    ROUND(SUM([Profit USD]), 2) AS profit
+    ROUND(SUM([Revenue USD]), 2) AS revenue,
+    ROUND(SUM([Gross Profit USD]), 2) AS gross_profit
 FROM cleaned_sales
 GROUP BY ProductKey, [Product Name]
-HAVING SUM([Profit USD]) < 0
-ORDER BY profit ASC;
+HAVING SUM([Gross Profit USD]) < 0
+ORDER BY gross_profit ASC;

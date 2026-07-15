@@ -51,11 +51,13 @@ Dollar signs, commas, and extra spaces were removed from `Unit Cost USD` and `Un
 | Month | Month number from Order Date |
 | Month Name | Month name from Order Date |
 | Day of Week | Day name from Order Date |
-| Sales USD | Quantity × Unit Price USD |
+| Revenue USD | Quantity × Unit Price USD |
 | Cost USD | Quantity × Unit Cost USD |
-| Profit USD | Sales USD − Cost USD |
-| Profit Margin % | Profit USD ÷ Sales USD × 100 |
-| Sales Category | Low: up to $500; Medium: above $500 up to $1,000; High: above $1,000 |
+| Gross Profit USD | Revenue USD − Cost USD |
+| Gross Margin % | Gross Profit USD ÷ Revenue USD × 100 |
+| Sales Category | Revenue USD divided into three equally sized groups: Low, Medium, and High |
+
+Sales categories are relative to this dataset. They are intended for comparison and are not company-approved pricing thresholds.
 
 ## Final validation
 
